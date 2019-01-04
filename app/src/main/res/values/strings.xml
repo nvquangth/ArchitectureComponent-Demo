@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ArchitectureComponentDemo</string>
+    <string name="title_create_user">Create User</string>
+</resources>
