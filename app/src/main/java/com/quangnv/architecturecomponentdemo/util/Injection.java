@@ -1,4 +1,4 @@
-package com.quangnv.architecturecomponentdemo;
+package com.quangnv.architecturecomponentdemo.util;
 
 import android.content.Context;
 

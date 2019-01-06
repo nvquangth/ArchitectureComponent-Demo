@@ -1,9 +1,13 @@
 package com.quangnv.architecturecomponentdemo.screen.create_user;
 
-import android.arch.persistence.room.util.StringUtil;
-
 import com.quangnv.architecturecomponentdemo.data.model.User;
 import com.quangnv.architecturecomponentdemo.data.repository.UserRepository;
+import com.quangnv.architecturecomponentdemo.util.rx.BaseSchedulerProvider;
+
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by quangnv on 06/01/2019
@@ -13,9 +17,13 @@ public class CreateUserPresenter implements CreateUserContract.Presenter {
 
     private CreateUserContract.View mView;
     private UserRepository mRepository;
+    private BaseSchedulerProvider mScheduler;
+    private CompositeDisposable mCompositeDisposable;
 
-    public CreateUserPresenter(UserRepository repository) {
+    public CreateUserPresenter(UserRepository repository, BaseSchedulerProvider scheduler) {
         mRepository = repository;
+        mScheduler = scheduler;
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
@@ -41,7 +49,20 @@ public class CreateUserPresenter implements CreateUserContract.Presenter {
     }
 
     private void saveUser(User user) {
-        mRepository.insert(user);
-        mView.showAddUserSuccessful();
+        Disposable disposable = mRepository.insert(user)
+                .subscribeOn(mScheduler.io())
+                .observeOn(mScheduler.ui())
+                .subscribe(new Action() {
+                    @Override
+                    public void run() {
+                        mView.showAddUserSuccessful();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+
+                    }
+                });
+        mCompositeDisposable.add(disposable);
     }
 }

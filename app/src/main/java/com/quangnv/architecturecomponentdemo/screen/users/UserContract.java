@@ -12,10 +12,14 @@ public interface UserContract {
         void showUsers(List<User> users);
 
         void showNoUser();
+
+        void notifyUserClear(User user);
     }
 
     interface Presenter extends BasePresenter<View> {
 
         void getUsers();
+
+        void clearUser(User user);
     }
 }

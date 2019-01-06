@@ -1,12 +1,12 @@
 package com.quangnv.architecturecomponentdemo.data.repository;
 
-import android.os.AsyncTask;
-
 import com.quangnv.architecturecomponentdemo.data.model.User;
 import com.quangnv.architecturecomponentdemo.data.source.UserDataSource;
-import com.quangnv.architecturecomponentdemo.data.source.UserListener;
 
 import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.Observable;
 
 public class UserRepository implements UserDataSource.Local {
 
@@ -25,74 +25,37 @@ public class UserRepository implements UserDataSource.Local {
     }
 
     @Override
-    public void insert(User user) {
-        new InsertAsyncTask(mLocal).execute(user);
+    public Completable insert(User user) {
+        return mLocal.insert(user);
     }
 
     @Override
-    public void update(User user) {
-        mLocal.update(user);
+    public Completable update(User user) {
+        return mLocal.update(user);
     }
 
     @Override
-    public void delete(User user) {
-        mLocal.delete(user);
+    public Completable delete(User user) {
+        return mLocal.delete(user);
     }
 
     @Override
-    public User getUser(int userId) {
+    public Observable<User> getUser(int userId) {
         return mLocal.getUser(userId);
     }
 
     @Override
-    public List<User> getUsers(UserListener listener) {
-        new GetAllAsyncTask(mLocal, listener).execute();
-        return null;
+    public Observable<List<User>> getUsers() {
+        return mLocal.getUsers();
     }
 
     @Override
-    public void deleteAll() {
-        mLocal.deleteAll();
+    public Completable deleteAll() {
+        return mLocal.deleteAll();
     }
 
     @Override
-    public List<User> search(String q) {
+    public Observable<List<User>> search(String q) {
         return mLocal.search(q);
-    }
-
-    private static class InsertAsyncTask extends AsyncTask<User, Void, Void> {
-
-        private UserDataSource.Local mLocal;
-
-        public InsertAsyncTask(UserDataSource.Local local) {
-            mLocal = local;
-        }
-
-        @Override
-        protected Void doInBackground(User... users) {
-            mLocal.insert(users[0]);
-            return null;
-        }
-    }
-
-    private static class GetAllAsyncTask extends AsyncTask<Void, Void, List<User>> {
-
-        private UserDataSource.Local mLocal;
-        private UserListener mListener;
-
-        public GetAllAsyncTask(UserDataSource.Local local, UserListener listener) {
-            mLocal = local;
-            mListener = listener;
-        }
-
-        @Override
-        protected List<User> doInBackground(Void... voids) {
-            return mLocal.getUsers(mListener);
-        }
-
-        @Override
-        protected void onPostExecute(List<User> users) {
-            mListener.onGetAllUserComplete(users);
-        }
     }
 }

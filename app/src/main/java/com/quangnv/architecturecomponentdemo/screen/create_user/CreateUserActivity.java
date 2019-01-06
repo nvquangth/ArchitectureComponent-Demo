@@ -10,11 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.quangnv.architecturecomponentdemo.Injection;
+import com.quangnv.architecturecomponentdemo.util.Injection;
 import com.quangnv.architecturecomponentdemo.R;
 import com.quangnv.architecturecomponentdemo.data.repository.UserRepository;
+import com.quangnv.architecturecomponentdemo.util.rx.BaseSchedulerProvider;
+import com.quangnv.architecturecomponentdemo.util.rx.SchedulerProvider;
 
-public class CreateUserActivity extends AppCompatActivity implements View.OnClickListener, CreateUserContract.View {
+public class CreateUserActivity extends AppCompatActivity implements View.OnClickListener,
+        CreateUserContract.View {
 
     private EditText mTextFirstName;
     private EditText mTextLastName;
@@ -37,7 +40,8 @@ public class CreateUserActivity extends AppCompatActivity implements View.OnClic
         registerListener();
 
         UserRepository repository = Injection.provideUserRepository(this);
-        mPresenter = new CreateUserPresenter(repository);
+        BaseSchedulerProvider scheduler = SchedulerProvider.getInstance();
+        mPresenter = new CreateUserPresenter(repository, scheduler);
         mPresenter.setView(this);
     }
 

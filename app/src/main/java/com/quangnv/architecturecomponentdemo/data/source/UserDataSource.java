@@ -4,22 +4,25 @@ import com.quangnv.architecturecomponentdemo.data.model.User;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+
 public interface UserDataSource {
 
     interface Local {
 
-        void insert(User user);
+        Completable insert(User user);
 
-        void update(User user);
+        Completable update(User user);
 
-        void delete(User user);
+        Completable delete(User user);
 
-        User getUser(int userId);
+        Observable<User> getUser(int userId);
 
-        List<User> getUsers(UserListener listener);
+        Observable<List<User>> getUsers();
 
-        void deleteAll();
+        Completable deleteAll();
 
-        List<User> search(String q);
+        Observable<List<User>> search(String q);
     }
 }

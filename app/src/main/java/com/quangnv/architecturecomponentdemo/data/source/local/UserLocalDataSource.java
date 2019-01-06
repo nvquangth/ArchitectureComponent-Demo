@@ -2,10 +2,15 @@ package com.quangnv.architecturecomponentdemo.data.source.local;
 
 import com.quangnv.architecturecomponentdemo.data.model.User;
 import com.quangnv.architecturecomponentdemo.data.source.UserDataSource;
-import com.quangnv.architecturecomponentdemo.data.source.UserListener;
 import com.quangnv.architecturecomponentdemo.data.source.local.sqlite.UserDao;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableOnSubscribe;
+import io.reactivex.Observable;
 
 public class UserLocalDataSource implements UserDataSource.Local {
 
@@ -25,37 +30,92 @@ public class UserLocalDataSource implements UserDataSource.Local {
     }
 
     @Override
-    public void insert(User user) {
-        mUserDao.insert(user);
+    public Completable insert(final User user) {
+        return Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(CompletableEmitter emitter) {
+                try {
+                    mUserDao.insert(user);
+                    emitter.onComplete();
+                } catch (Exception e) {
+                    emitter.onError(e);
+                }
+            }
+        });
     }
 
     @Override
-    public void update(User user) {
-        mUserDao.update(user);
+    public Completable update(final User user) {
+        return Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(CompletableEmitter emitter) throws Exception {
+                try {
+                    mUserDao.update(user);
+                    emitter.onComplete();
+                } catch (Exception e) {
+                    emitter.onError(e);
+                }
+            }
+        });
     }
 
     @Override
-    public void delete(User user) {
-        mUserDao.delete(user);
+    public Completable delete(final User user) {
+        return Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(CompletableEmitter emitter) {
+                try {
+                    mUserDao.delete(user);
+                    emitter.onComplete();
+                } catch (Exception e) {
+                    emitter.onError(e);
+                }
+            }
+        });
     }
 
     @Override
-    public User getUser(int userId) {
-        return mUserDao.getUser(userId);
+    public Observable<User> getUser(final int userId) {
+        return Observable.fromCallable(new Callable<User>() {
+            @Override
+            public User call() {
+                return mUserDao.getUser(userId);
+            }
+        });
     }
 
     @Override
-    public List<User> getUsers(UserListener listener) {
-        return mUserDao.getUsers();
+    public Observable<List<User>> getUsers() {
+        return Observable.fromCallable(new Callable<List<User>>() {
+            @Override
+            public List<User> call() {
+                return mUserDao.getUsers();
+            }
+        });
     }
 
     @Override
-    public void deleteAll() {
-        mUserDao.deleteAll();
+    public Completable deleteAll() {
+        return Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(CompletableEmitter emitter) {
+                try {
+                    mUserDao.deleteAll();
+                    emitter.onComplete();
+                } catch (Exception e) {
+                    emitter.onError(e);
+                }
+            }
+        });
     }
 
     @Override
-    public List<User> search(String q) {
-        return mUserDao.search(q);
+    public Observable<List<User>> search(final String q) {
+        return Observable.fromCallable(new Callable<List<User>>() {
+            @Override
+            public List<User> call() {
+                return mUserDao.search(q);
+            }
+        });
     }
 }

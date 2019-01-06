@@ -11,22 +11,26 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.quangnv.architecturecomponentdemo.Injection;
+import com.quangnv.architecturecomponentdemo.util.Injection;
 import com.quangnv.architecturecomponentdemo.R;
 import com.quangnv.architecturecomponentdemo.data.model.User;
 import com.quangnv.architecturecomponentdemo.data.repository.UserRepository;
 import com.quangnv.architecturecomponentdemo.screen.create_user.CreateUserActivity;
+import com.quangnv.architecturecomponentdemo.util.rx.BaseSchedulerProvider;
+import com.quangnv.architecturecomponentdemo.util.rx.SchedulerProvider;
 
 import java.util.List;
 
-public class UserActivity extends AppCompatActivity implements View.OnClickListener, UserContract.View {
+public class UserActivity extends AppCompatActivity implements View.OnClickListener,
+        UserAdapter.OnClearUserListenter,
+        UserContract.View {
 
     private static final int REQUEST_CODE = 100;
     private RecyclerView mRecyclerUser;
     private Button mButtonAdd;
 
     private UserAdapter mUserAdapter;
-    private UserPresenter mPresenter;
+    private UserContract.Presenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +43,13 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         registerListener();
 
         UserRepository repository = Injection.provideUserRepository(this);
-        mPresenter = new UserPresenter(repository);
+        BaseSchedulerProvider scheduler = SchedulerProvider.getInstance();
+        mPresenter = new UserPresenter(repository, scheduler);
         mPresenter.setView(this);
 
         mRecyclerUser.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
-        mUserAdapter = new UserAdapter(this);
+        mUserAdapter = new UserAdapter(this, this);
         mRecyclerUser.setAdapter(mUserAdapter);
         mPresenter.getUsers();
     }
@@ -71,6 +76,16 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void showNoUser() {
         toast("No data");
+    }
+
+    @Override
+    public void notifyUserClear(User user) {
+        mUserAdapter.removeUser(user);
+    }
+
+    @Override
+    public void onClearUser(User user) {
+        mPresenter.clearUser(user);
     }
 
     private void gotoCreateUserScreen() {
