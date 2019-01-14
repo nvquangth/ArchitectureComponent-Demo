@@ -1,5 +1,4 @@
 # Architecture Demo
-## Room
-## Live Data
-## View Model
-## Rx(optional)
+## - Room vs Rx (optional)
+## - Live Data
+## - View Model
