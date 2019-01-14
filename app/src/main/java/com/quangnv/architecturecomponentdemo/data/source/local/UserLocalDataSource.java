@@ -1,5 +1,7 @@
 package com.quangnv.architecturecomponentdemo.data.source.local;
 
+import android.arch.lifecycle.LiveData;
+
 import com.quangnv.architecturecomponentdemo.data.model.User;
 import com.quangnv.architecturecomponentdemo.data.source.UserDataSource;
 import com.quangnv.architecturecomponentdemo.data.source.local.sqlite.UserDao;
@@ -85,13 +87,8 @@ public class UserLocalDataSource implements UserDataSource.Local {
     }
 
     @Override
-    public Observable<List<User>> getUsers() {
-        return Observable.fromCallable(new Callable<List<User>>() {
-            @Override
-            public List<User> call() {
-                return mUserDao.getUsers();
-            }
-        });
+    public LiveData<List<User>> getUsers() {
+        return mUserDao.getUsers();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.quangnv.architecturecomponentdemo.data.source;
 
+import android.arch.lifecycle.LiveData;
+
 import com.quangnv.architecturecomponentdemo.data.model.User;
 
 import java.util.List;
@@ -19,7 +21,7 @@ public interface UserDataSource {
 
         Observable<User> getUser(int userId);
 
-        Observable<List<User>> getUsers();
+        LiveData<List<User>> getUsers();
 
         Completable deleteAll();
 

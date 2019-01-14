@@ -22,6 +22,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:appcompat-v7:$versions.support"
     implementation "com.android.support.constraint:constraint-layout:$versions.constraintlayout"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation "junit:junit:$versions.junit"
     androidTestImplementation "com.android.support.test:runner:$versions.runner"
     androidTestImplementation "com.android.support.test.espresso:espresso-intents:$versions.spressocore"
@@ -33,6 +34,11 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$versions.room"
     annotationProcessor "android.arch.persistence.room:compiler:$versions.room"
     androidTestImplementation "android.arch.persistence.room:testing:$versions.room"
+
+    // LifeCycle with ViewModel and LiveData
+    implementation "android.arch.lifecycle:extensions:$versions.lifecycle"
+    implementation "android.arch.lifecycle:runtime:$versions.lifecycle"
+    annotationProcessor "android.arch.lifecycle:compiler:$versions.lifecycle"
 
     // Rx
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"

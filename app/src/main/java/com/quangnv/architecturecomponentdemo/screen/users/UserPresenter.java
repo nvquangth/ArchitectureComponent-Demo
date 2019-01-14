@@ -25,29 +25,6 @@ public class UserPresenter implements UserContract.Presenter {
     }
 
     @Override
-    public void getUsers() {
-        Disposable disposable = mRepository.getUsers()
-                .subscribeOn(mScheduler.io())
-                .observeOn(mScheduler.ui())
-                .subscribe(new Consumer<List<User>>() {
-                    @Override
-                    public void accept(List<User> users) {
-                        if (users == null || users.isEmpty()) {
-                            mView.showNoUser();
-                            return;
-                        }
-                        mView.showUsers(users);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        mView.showNoUser();
-                    }
-                });
-        mCompositeDisposable.add(disposable);
-    }
-
-    @Override
     public void clearUser(final User user) {
         Disposable disposable = mRepository.delete(user)
                 .subscribeOn(mScheduler.io())

@@ -1,5 +1,7 @@
 package com.quangnv.architecturecomponentdemo.data.repository;
 
+import android.arch.lifecycle.LiveData;
+
 import com.quangnv.architecturecomponentdemo.data.model.User;
 import com.quangnv.architecturecomponentdemo.data.source.UserDataSource;
 
@@ -45,7 +47,7 @@ public class UserRepository implements UserDataSource.Local {
     }
 
     @Override
-    public Observable<List<User>> getUsers() {
+    public LiveData<List<User>> getUsers() {
         return mLocal.getUsers();
     }
 

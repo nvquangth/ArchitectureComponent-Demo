@@ -18,8 +18,6 @@ public interface UserContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        void getUsers();
-
         void clearUser(User user);
     }
 }

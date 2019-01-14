@@ -1,7 +1,7 @@
 package com.quangnv.architecturecomponentdemo.screen.users;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -11,11 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.quangnv.architecturecomponentdemo.util.Injection;
 import com.quangnv.architecturecomponentdemo.R;
 import com.quangnv.architecturecomponentdemo.data.model.User;
 import com.quangnv.architecturecomponentdemo.data.repository.UserRepository;
 import com.quangnv.architecturecomponentdemo.screen.create_user.CreateUserActivity;
+import com.quangnv.architecturecomponentdemo.util.Injection;
 import com.quangnv.architecturecomponentdemo.util.rx.BaseSchedulerProvider;
 import com.quangnv.architecturecomponentdemo.util.rx.SchedulerProvider;
 
@@ -31,6 +31,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
 
     private UserAdapter mUserAdapter;
     private UserContract.Presenter mPresenter;
+    private UserViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,20 +52,25 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 DividerItemDecoration.VERTICAL));
         mUserAdapter = new UserAdapter(this, this);
         mRecyclerUser.setAdapter(mUserAdapter);
-        mPresenter.getUsers();
+
+        mViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+        mViewModel.setRepository(repository);
+        mViewModel.getUsers().observe(this, new Observer<List<User>>() {
+            @Override
+            public void onChanged(@Nullable List<User> users) {
+                if (users == null || users.isEmpty()) {
+                    showNoUser();
+                    return;
+                }
+                mUserAdapter.setUsers(users);
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.button_create_user) {
             gotoCreateUserScreen();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            mPresenter.getUsers();
         }
     }
 
@@ -80,7 +86,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void notifyUserClear(User user) {
-        mUserAdapter.removeUser(user);
+//        mUserAdapter.removeUser(user);
     }
 
     @Override

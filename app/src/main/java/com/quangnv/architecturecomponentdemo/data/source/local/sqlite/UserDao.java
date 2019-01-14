@@ -1,5 +1,6 @@
 package com.quangnv.architecturecomponentdemo.data.source.local.sqlite;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -26,7 +27,7 @@ public interface UserDao {
     void deleteAll();
 
     @Query("SELECT * FROM user")
-    List<User> getUsers();
+    LiveData<List<User>> getUsers();
 
     @Query("SELECT * FROM user WHERE id = :id")
     User getUser(int id);
